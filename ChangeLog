@@ -1,0 +1,62 @@
+	0.3.14	- repaired bug by description field
+
+	0.3.13	- additionalDescription has now stdWrap properties (thx. to Stefan Galinski for patch)
+
+	0.3.12	- Making compatible with DAM 1.0.9 and >
+
+	0.3.11	- stdWrap added to layout.userMarker.dam markers
+
+	0.3.10	- Bug repaired by multilanguage Elements (thx. to Daniel Koch)
+
+	0.3.9	- Bug repaired by Read from Path and added possibility to specify allowed extensions in  “Read from path” field (thx. to Pieter Verstraelen)
+	
+	0.3.8	- dam.damDescription has now stdWrap properties (thx. to Franz-Xaver Koch for patch)
+
+	0.3.7	- Bug repaired by multilanguage Elements (thx. to Erich Bircher for patch)
+
+	0.3.6	- The “Read from path” for DAM added.
+
+	0.3.5	- Allowing of multilanguage Elements
+
+	0.3.4	- Php changes to allow all "stdWrap.filelist" parameters
+
+	0.3.3	- Templavoila integration (thx. to Christian Welzel)
+			- The "Read from path" added to original field
+
+	0.3.2	- Just some changes in manual
+
+	0.3.1	- Bug repaired (thx. to Christian Welzel)
+	
+	0.3.0	- Php changed, now this extension use hooks for working with css_filelinks
+
+	0.2.1	- Hooks to every function added for better extending
+			- Check for starttime, endtime, access... for tx_dam table added
+			- Added minElements , maxElements input by installation
+			- Added additionalDescription_ifElementEmpty property
+			- Bug repaired by filesize
+
+	0.2.0	- Manual changed
+			- If the file doesn't exist on disk it will not appear on the frontend
+			- Icon added
+			
+	0.1.4	- Manual changed
+			- Property damDescription.overrideOriginalDescription added
+			- The priority from damDescripton and additionalDescription changed
+			
+	0.1.3	- If no size in DAM use filesize
+	
+	0.1.2	- Property damDescription added
+			- Property additionalDescription added
+			- Manual changed
+			
+	0.1.1 	- Property damFieldFirst added
+			- Bug by additional repaired
+			- Manual changed
+
+	0.1.0 	- Manual added
+			- From alfa to beta	
+
+	0.0.2 	- Added stdWrap.editIcons
+			- Added UserMarker
+
+	* Initial release

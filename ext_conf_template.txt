@@ -1,0 +1,25 @@
+# cat=basic/enable; type=boolean; label=CType Filelinks: Enable original file field for the content type "Filelinks" as second file field and the "Read from path" field(if it is not disabled).
+ctype_media_add_orig_field = 0
+
+# cat=basic/enable; type=boolean; label="Read from path" belongs to DAM.
+readFromPathDam = 0
+
+# cat=basic/enable; type=int; label=The number of minimal inserted elements at once.
+minElements = 0
+
+# cat=basic/enable; type=int; label=The number of maximal inserted elements at once.
+maxElements = 20
+
+# cat=basic/enable; type=string; label=Extensions allowed to insert in the DAM field.
+allowedExt = 
+
+# cat=basic/enable; type=string; label=Extensions allowed to show in the "Read from path".
+allowedExtReadFromPath =
+
+# cat=basic/enable; type=boolean; label=DAM version > 1.0.8 
+dam_1_0_9=1
+
+
+TSConstantEditor.basic { 
+  description = <span style="color:red; font-weight:bold;">Warning this version can work only width css_filelinks version 0.2.0 and higher. This is because in css_filelinks until version 0.2.0 was the DAM integrated but in version 0.2.0 was all DAM stuff removed and so the dam_filelinks must use HOOKS. If you don't want install new css_filelinks version you can use the old but you must use dam_filelinks version 0.2.1 and lower.</span>
+}
