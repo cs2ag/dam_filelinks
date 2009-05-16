@@ -45,7 +45,7 @@ t3lib_extMgm::addTypoScript($_EXTKEY,'setup','
 				sys_language_mode=normal
 			}
 			linkProc.jumpurl{
-				damSecure = 0
+				damSecure = 1
 				damSecure.errorPage=http://www.mypage.com/error.html
 			}
 			'.$tempEditIcons.'

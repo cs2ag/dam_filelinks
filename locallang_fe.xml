@@ -7,6 +7,7 @@
 	<data type="array">
 		<languageKey index="default" type="array">
 			<label index="noaccess">NO ACCESS!</label>
+			<label index="noaccess_404">NO ACCESS</label>
 		</languageKey>
 	</data>
 </T3locallang>

@@ -36,18 +36,22 @@
  *
  *
  *
- *   57: class tx_damfilelinks extends tslib_pibase
- *   66:     function fetchFileList ($content, $conf)
- *   83:     function fillFileMarkers($fileFileMarkers,$fileLayout,$file,$fileCount,$fileext)
- *  107:     function getDamSql($field,$defaultField='')
- *  135:     function getDamResult($field,$row,$defaultField='',$defaultValue='')
- *  163:     function getDamFromDatabase($contentUid,$addField,$ident='tx_damfilelinks_filelinks')
- *  254:     function getFilesForCssUploads($conf)
- *  466:     function df_array_union($array1,$array2)
- *  481:     function &hookRequest($functionName)
- *  501:     function hookRequestMore($functionName)
+ *   61: class tx_damfilelinks extends tslib_pibase
+ *   70:     function fetchFileList ($content, $conf)
+ *   87:     function fillFileMarkers($fileFileMarkers,$fileLayout,$file,$fileCount,$fileext)
+ *  111:     function getDamSql($field,$defaultField='')
+ *  139:     function getDamResult($field,$row,$defaultField='',$defaultValue='')
+ *  167:     function getDamFromDatabase($contentUid,$addField,$ident='tx_damfilelinks_filelinks')
+ *  258:     function getFilesForCssUploads($conf)
+ *  473:     function getFileUrl($url,$conf,$record)
+ *  503:     function checkDownload()
+ *  549:     function showDownloadError()
+ *  565:     function getDownload($record,$url)
+ *  584:     function df_array_union($array1,$array2)
+ *  599:     function &hookRequest($functionName)
+ *  619:     function hookRequestMore($functionName)
  *
- * TOTAL FUNCTIONS: 9
+ * TOTAL FUNCTIONS: 13
  * (This index is automatically created/updated by the extension "extdeveval")
  *
  */
@@ -453,22 +457,22 @@
 				}else{
 					$file_all_return=$files_all_dam;
 				};
-				
+
 				return $file_all_return;
 			};
 		}
-		
+
 	/**
 	 * return url from file
 	 *
 	 * @param	string		$url: file url
 	 * @param	array		$conf: typoscript configuration
-	 * @param	array		$record: record with all informations about the file 
+	 * @param	array		$record: record with all informations about the file
 	 * @return	string		url
 	 */
 	function getFileUrl($url,$conf,$record){
 		if ($hookObj = &$this->hookRequest('getFileUrl'))	{
-				return $hookObj->getFileUrl($url,$conf);
+				return $hookObj->getFileUrl($url,$conf,$record);
 		} else {
 			$output = '';
 			$initP = '?id='.$GLOBALS['TSFE']->id.'&type='.$GLOBALS['TSFE']->type;
@@ -490,7 +494,7 @@
 			return '';
 		};
 	}
-	
+
 	/**
 	 * if the damSecure is set this function return the file
 	 *
@@ -507,22 +511,22 @@
 			if(substr(md5($cid.$did.$GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey']),0,8)!= $securehash) return $this->showDownloadError();
 			if($cid==0 || $did==0) return $this->showDownloadError();
 			// check if the content element exists
-			$res_content = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
+			/*$res_content = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
 				'tt_content.*',
 				'tt_content',
 				'tt_content.pid='.$GLOBALS['TSFE']->page['uid'].' AND tt_content.uid='.$cid.' '.$GLOBALS['TSFE']->sys_page->enableFields('tt_content')
 			);
-			if($GLOBALS['TYPO3_DB']->sql_num_rows($res_content)==0) return $this->showDownloadError();
+			if($GLOBALS['TYPO3_DB']->sql_num_rows($res_content)==0) return $this->showDownloadError();*/
 			// check if the dam element exists
 			$res_dam = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
 				'tx_dam.*',
 				'tx_dam',
 				'tx_dam.uid='.$did.' '.$GLOBALS['TSFE']->sys_page->enableFields('tx_dam')
-			);		
+			);
 			if($GLOBALS['TYPO3_DB']->sql_num_rows($res_dam)==0) return $this->showDownloadError();
 			$row_dam = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res_dam);
 			$url=$row_dam['file_path'].$row_dam['file_name'];
-			
+
 			/*
 			$res_mm=$GLOBALS['TYPO3_DB']->exec_SELECTquery(
 				'tx_dam_mm_ref.*',
@@ -532,29 +536,31 @@
 			);
 			$row_mm = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res_mm);
 			*/
-			
+
 			$this->getDownload($row_dam,$url);
 		};
 	}
-	
+
 	/**
 	 * if the file doesn't exist or the user has no right to access it this function return the no access screen
 	 *
 	 * @return	void
 	 */
 	function showDownloadError(){
-		if($this->conf['linkProc.']['jumpurl.']['damSecure.']['errorPage']==0){
+		if($this->conf['linkProc.']['jumpurl.']['damSecure.']['errorPage']==''){
 			echo $GLOBALS['TSFE']->sL('LLL:EXT:dam_filelinks/locallang_fe.xml:noaccess');
 		}else{
+			header('HTTP/1.0 404 '.$GLOBALS['TSFE']->sL('LLL:EXT:dam_filelinks/locallang_fe.xml:noaccess_404'));
 			header('Location:'.$this->conf['linkProc.']['jumpurl.']['damSecure.']['errorPage']);
 		}
 		exit();
 	}
-	
+
 	/**
 	 * download the file
 	 *
 	 * @param	array		$record: record with all informations about the file
+	 * @param	[type]		$url: ...
 	 * @return	void
 	 */
 	function getDownload($record,$url){
@@ -563,8 +569,8 @@
 		$fp=fopen($url,'rb');
 		$file_content=fread($fp,filesize($url));
 		fclose($fp);
-		header("Content-type: application/octet-stream");  
-		header("Content-disposition: attachment; filename=".$record['file_dl_name']);  
+		header("Content-type: application/octet-stream");
+		header("Content-disposition: attachment; filename=".$record['file_dl_name']);
 		echo $file_content;
 		exit();
 	}
