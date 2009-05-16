@@ -3,6 +3,7 @@ if (!defined ('TYPO3_MODE')) 	die ('Access denied.');
 
 $TYPO3_CONF_VARS['EXTCONF']['css_filelinks']['pi1_hooks']['getFilesForCssUploads']="EXT:dam_filelinks/class.tx_damfilelinks.php:&tx_damfilelinks";
 $TYPO3_CONF_VARS['EXTCONF']['css_filelinks']['pi1_hooks_more']['fillFileMarkers'][]="EXT:dam_filelinks/class.tx_damfilelinks.php:&tx_damfilelinks";
+$TYPO3_CONF_VARS['EXTCONF']['css_filelinks']['pi1_hooks']['getFileUrl']="EXT:dam_filelinks/class.tx_damfilelinks.php:&tx_damfilelinks";
 
 $GLOBALS['T3_VAR']['ext']['dam_filelinks']['setup'] = unserialize($_EXTCONF);
 
@@ -42,6 +43,10 @@ t3lib_extMgm::addTypoScript($_EXTKEY,'setup','
 				)
 				additionalDescription_ifElementEmpty < tt_content.uploads.20.description_ifElementEmpty
 				sys_language_mode=normal
+			}
+			linkProc.jumpurl{
+				damSecure = 0
+				damSecure.errorPage=http://www.mypage.com/error.html
 			}
 			'.$tempEditIcons.'
 		}',43);

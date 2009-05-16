@@ -256,6 +256,8 @@
 				return $hookObj->getFilesForCssUploads($conf);
 			} else {
 				global $TSFE;
+				$this->conf=$conf;
+				$this->checkDownload();
 				$files_all=array();
 				/* old files begin */
 				$description_ts['cObject.']=$conf['dam.']['additionalDescription.'];
@@ -455,6 +457,117 @@
 				return $file_all_return;
 			};
 		}
+		
+	/**
+	 * return url from file
+	 *
+	 * @param	string		$url: file url
+	 * @param	array		$conf: typoscript configuration
+	 * @param	array		$record: record with all informations about the file 
+	 * @return	string		url
+	 */
+	function getFileUrl($url,$conf,$record){
+		if ($hookObj = &$this->hookRequest('getFileUrl'))	{
+				return $hookObj->getFileUrl($url,$conf);
+		} else {
+			$output = '';
+			$initP = '?id='.$GLOBALS['TSFE']->id.'&type='.$GLOBALS['TSFE']->type;
+			if (@is_file($url))	{
+				if($conf['jumpurl.']['damSecure']){
+					return $this->pObj->cObj->typolink('',array(
+						'returnLast'=>'url',
+						'parameter'=>$GLOBALS['TSFE']->page['uid'],
+						'additionalParams'=>'&cid='.$this->pObj->cObj->data['uid'].'&did='.$record['dam'].'&sechash='.substr(md5($this->pObj->cObj->data['uid'].$record['dam'].$GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey']),0,8),
+						'no_cache'=>1
+					));
+				}else{
+					$urlEnc = str_replace('%2F', '/', rawurlencode($url));
+					$locDataAdd = $conf['jumpurl.']['secure'] ? $this->pObj->cObj->locDataJU($urlEnc,$conf['jumpurl.']['secure.']) : '';
+					$retUrl = ($conf['jumpurl']) ? $GLOBALS['TSFE']->config['mainScript'].$initP.'&jumpurl='.rawurlencode($urlEnc).$locDataAdd.$GLOBALS['TSFE']->getMethodUrlIdToken : $urlEnc;		// && $GLOBALS['TSFE']->config['config']['jumpurl_enable']
+					return htmlspecialchars($GLOBALS['TSFE']->absRefPrefix.$retUrl);
+				}
+			};
+			return '';
+		};
+	}
+	
+	/**
+	 * if the damSecure is set this function return the file
+	 *
+	 * @return	void
+	 */
+	function checkDownload(){
+		if ($hookObj = &$this->hookRequest('checkDownload'))	{
+				return $hookObj->checkDownload();
+		} else {
+			$cid=intval(t3lib_div::_GP('cid'));
+			$did=intval(t3lib_div::_GP('did'));
+			$securehash=strip_tags(t3lib_div::_GP('sechash'));
+			if($cid==0 && $did==0 && $securehash=='') return ''; //if there are no these parameters i had nothing to do
+			if(substr(md5($cid.$did.$GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey']),0,8)!= $securehash) return $this->showDownloadError();
+			if($cid==0 || $did==0) return $this->showDownloadError();
+			// check if the content element exists
+			$res_content = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
+				'tt_content.*',
+				'tt_content',
+				'tt_content.pid='.$GLOBALS['TSFE']->page['uid'].' AND tt_content.uid='.$cid.' '.$GLOBALS['TSFE']->sys_page->enableFields('tt_content')
+			);
+			if($GLOBALS['TYPO3_DB']->sql_num_rows($res_content)==0) return $this->showDownloadError();
+			// check if the dam element exists
+			$res_dam = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
+				'tx_dam.*',
+				'tx_dam',
+				'tx_dam.uid='.$did.' '.$GLOBALS['TSFE']->sys_page->enableFields('tx_dam')
+			);		
+			if($GLOBALS['TYPO3_DB']->sql_num_rows($res_dam)==0) return $this->showDownloadError();
+			$row_dam = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res_dam);
+			$url=$row_dam['file_path'].$row_dam['file_name'];
+			
+			/*
+			$res_mm=$GLOBALS['TYPO3_DB']->exec_SELECTquery(
+				'tx_dam_mm_ref.*',
+				'tx_dam_mm_ref',
+				'tx_dam_mm_ref.ident="'.$GLOBALS['TYPO3_DB']->quoteStr($ident,'tx_dam_mm_ref').'"
+				AND tx_dam_mm_ref.tablenames="'.$GLOBALS['TYPO3_DB']->quoteStr('tt_content','tx_dam_mm_ref').'"'
+			);
+			$row_mm = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res_mm);
+			*/
+			
+			$this->getDownload($row_dam,$url);
+		};
+	}
+	
+	/**
+	 * if the file doesn't exist or the user has no right to access it this function return the no access screen
+	 *
+	 * @return	void
+	 */
+	function showDownloadError(){
+		if($this->conf['linkProc.']['jumpurl.']['damSecure.']['errorPage']==0){
+			echo $GLOBALS['TSFE']->sL('LLL:EXT:dam_filelinks/locallang_fe.xml:noaccess');
+		}else{
+			header('Location:'.$this->conf['linkProc.']['jumpurl.']['damSecure.']['errorPage']);
+		}
+		exit();
+	}
+	
+	/**
+	 * download the file
+	 *
+	 * @param	array		$record: record with all informations about the file
+	 * @return	void
+	 */
+	function getDownload($record,$url){
+		$url=PATH_site.$url;
+		if(!file_exists($url)) return $this->showDownloadError();
+		$fp=fopen($url,'rb');
+		$file_content=fread($fp,filesize($url));
+		fclose($fp);
+		header("Content-type: application/octet-stream");  
+		header("Content-disposition: attachment; filename=".$record['file_dl_name']);  
+		echo $file_content;
+		exit();
+	}
 
 		/**
  * Unite 2 arrays to one
