@@ -45,11 +45,11 @@
  *  258:     function getFilesForCssUploads($conf)
  *  473:     function getFileUrl($url,$conf,$record)
  *  503:     function checkDownload()
- *  549:     function showDownloadError()
- *  565:     function getDownload($record,$url)
- *  584:     function df_array_union($array1,$array2)
- *  599:     function &hookRequest($functionName)
- *  619:     function hookRequestMore($functionName)
+ *  539:     function showDownloadError()
+ *  555:     function getDownload($record,$url)
+ *  574:     function df_array_union($array1,$array2)
+ *  589:     function &hookRequest($functionName)
+ *  609:     function hookRequestMore($functionName)
  *
  * TOTAL FUNCTIONS: 13
  * (This index is automatically created/updated by the extension "extdeveval")
@@ -511,12 +511,12 @@
 			if(substr(md5($cid.$did.$GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey']),0,8)!= $securehash) return $this->showDownloadError();
 			if($cid==0 || $did==0) return $this->showDownloadError();
 			// check if the content element exists
-			/*$res_content = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
+			$res_content = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
 				'tt_content.*',
 				'tt_content',
-				'tt_content.pid='.$GLOBALS['TSFE']->page['uid'].' AND tt_content.uid='.$cid.' '.$GLOBALS['TSFE']->sys_page->enableFields('tt_content')
+				'tt_content.uid='.$cid.' '.$GLOBALS['TSFE']->sys_page->enableFields('tt_content')
 			);
-			if($GLOBALS['TYPO3_DB']->sql_num_rows($res_content)==0) return $this->showDownloadError();*/
+			if($GLOBALS['TYPO3_DB']->sql_num_rows($res_content)==0) return $this->showDownloadError();
 			// check if the dam element exists
 			$res_dam = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
 				'tx_dam.*',
@@ -526,16 +526,6 @@
 			if($GLOBALS['TYPO3_DB']->sql_num_rows($res_dam)==0) return $this->showDownloadError();
 			$row_dam = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res_dam);
 			$url=$row_dam['file_path'].$row_dam['file_name'];
-
-			/*
-			$res_mm=$GLOBALS['TYPO3_DB']->exec_SELECTquery(
-				'tx_dam_mm_ref.*',
-				'tx_dam_mm_ref',
-				'tx_dam_mm_ref.ident="'.$GLOBALS['TYPO3_DB']->quoteStr($ident,'tx_dam_mm_ref').'"
-				AND tx_dam_mm_ref.tablenames="'.$GLOBALS['TYPO3_DB']->quoteStr('tt_content','tx_dam_mm_ref').'"'
-			);
-			$row_mm = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res_mm);
-			*/
 
 			$this->getDownload($row_dam,$url);
 		};
@@ -550,8 +540,7 @@
 		if($this->conf['linkProc.']['jumpurl.']['damSecure.']['errorPage']==''){
 			echo $GLOBALS['TSFE']->sL('LLL:EXT:dam_filelinks/locallang_fe.xml:noaccess');
 		}else{
-			header('HTTP/1.0 404 '.$GLOBALS['TSFE']->sL('LLL:EXT:dam_filelinks/locallang_fe.xml:noaccess_404'));
-			header('Location:'.$this->conf['linkProc.']['jumpurl.']['damSecure.']['errorPage']);
+			$GLOBALS['TSFE']->pageErrorHandler($this->conf['linkProc.']['jumpurl.']['damSecure.']['errorPage'],'',$GLOBALS['TSFE']->sL('LLL:EXT:dam_filelinks/locallang_fe.xml:noaccess_404'));
 		}
 		exit();
 	}
