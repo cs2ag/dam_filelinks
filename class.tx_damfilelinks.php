@@ -354,6 +354,9 @@
 				/* small hack for templavoila */
 				$dam_selectfields=$sizeFieldsSQL.$titleFieldsSQL.$fileNameFieldsSQL.$filePathFieldsSQL.$userMarker_sql.$descriptionFieldSQL;
                 $_id = isset($this->pObj->cObj->data['uid']) ? $this->pObj->cObj->data['uid'] : $this->pObj->cObj->parentRecord['data']['uid'];
+				if (isset($this->pObj->cObj->data['_ORIG_uid']) && ($this->pObj->cObj->data['_ORIG_uid'] > 0)) {
+					$_id = $this->pObj->cObj->data['_ORIG_uid'];
+				}
 				$localized_id = isset($this->pObj->cObj->data['_LOCALIZED_UID']) ? $this->pObj->cObj->data['_LOCALIZED_UID'] : $this->pObj->cObj->parentRecord['data']['_LOCALIZED_UID'];
 				if ($localized_id) {$_id = $localized_id;}
 				$res=$this->getDamFromDatabase($_id,$dam_selectfields,$conf['dam.']['damIdentField']);
