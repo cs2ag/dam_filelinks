@@ -562,18 +562,18 @@
 		$file_content=fread($fp,filesize($url));
 		fclose($fp);
 		header("Content-type: application/octet-stream");
-		header("Content-disposition: attachment; filename=".$record['file_dl_name']);
+		header('Content-disposition: attachment; filename="'.$record['file_dl_name'].'"');
 		echo $file_content;
 		exit();
 	}
 
 		/**
- * Unite 2 arrays to one
- *
- * @param	array		array with language values
- * @param	array		array with original values
- * @return	array		united arrays
- */
+		 * Unite 2 arrays to one
+		 *
+		 * @param	array		array with language values
+		 * @param	array		array with original values
+		 * @return	array		united arrays
+		 */
 		function df_array_union($array1,$array2)	{
 			foreach($array1 as $key=>$val){
 				if($val!='' && $val!='0'){
@@ -584,11 +584,11 @@
 		}
 
 		/**
- * Returns an object reference to the hook object if any
- *
- * @param	string		Name of the function you want to call / hook key
- * @return	object		Hook object, if any. Otherwise null.
- */
+		 * Returns an object reference to the hook object if any
+		 *
+		 * @param	string		Name of the function you want to call / hook key
+		 * @return	object		Hook object, if any. Otherwise null.
+		 */
 		function &hookRequest($functionName)	{
 			global $TYPO3_CONF_VARS;
 
@@ -604,11 +604,11 @@
 
 
 		/**
- * Returns an array of object reference to the hook object if any
- *
- * @param	string		Name of the function you want to call / hook key
- * @return	array		Array of Hook objects or empty array.
- */
+		 * Returns an array of object reference to the hook object if any
+		 *
+		 * @param	string		Name of the function you want to call / hook key
+		 * @return	array		Array of Hook objects or empty array.
+		 */
 		function hookRequestMore($functionName)	{
 			global $TYPO3_CONF_VARS;
 
