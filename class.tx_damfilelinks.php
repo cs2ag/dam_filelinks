@@ -543,7 +543,11 @@
 		if($this->conf['linkProc.']['jumpurl.']['damSecure.']['errorPage']==''){
 			echo $GLOBALS['TSFE']->sL('LLL:EXT:dam_filelinks/locallang_fe.xml:noaccess');
 		}else{
-			$GLOBALS['TSFE']->pageErrorHandler($this->conf['linkProc.']['jumpurl.']['damSecure.']['errorPage'],'',$GLOBALS['TSFE']->sL('LLL:EXT:dam_filelinks/locallang_fe.xml:noaccess_404'));
+			if($this->conf['linkProc.']['jumpurl.']['damSecure.']['errorPage']==''){
+				$GLOBALS['TSFE']->pageErrorHandler('http://'.$_SERVER['HTTP_HOST'],'',$GLOBALS['TSFE']->sL('LLL:EXT:dam_filelinks/locallang_fe.xml:noaccess_404'));
+			}else{
+				$GLOBALS['TSFE']->pageErrorHandler($this->conf['linkProc.']['jumpurl.']['damSecure.']['errorPage'],'',$GLOBALS['TSFE']->sL('LLL:EXT:dam_filelinks/locallang_fe.xml:noaccess_404'));
+			}
 		}
 		exit();
 	}
