@@ -565,6 +565,8 @@
 		$fp=fopen($url,'rb');
 		$file_content=fread($fp,filesize($url));
 		fclose($fp);
+		header("Pragma: private");
+		header("Cache-control: private, must-revalidate");
 		header("Content-type: application/octet-stream");
 		header('Content-disposition: attachment; filename="'.$record['file_dl_name'].'"');
 		echo $file_content;
