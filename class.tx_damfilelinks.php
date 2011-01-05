@@ -319,7 +319,7 @@
 								$file=$filetemp;
 							};
 							if(@is_file(trim($path).trim($file))){
-								if ($conf['linkProc.']['removePrependedNumbers']){$title=ereg_replace('_[0-9][0-9](\.[[:alnum:]]*)$','\1',$file);}else{$title=$file;}
+								if ($conf['linkProc.']['removePrependedNumbers']){$title=preg_replace('_[0-9][0-9](\.[[:alnum:]]*)$','\1',$file);}else{$title=$file;}
 								$description=$descriptionArray[$i]!=''?$descriptionArray[$i]:$description_ifElementEmpty;
 								$files_all[]=array('dam'=>'0','url'=>trim($path).trim($file),'title'=>trim($title),'size'=>filesize(trim($path).trim($file)),'filename'=>trim($file),'description'=>$description);
 								$i++;
