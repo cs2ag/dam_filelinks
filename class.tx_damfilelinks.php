@@ -563,17 +563,19 @@
 		$url=PATH_site.$url;
 		if(!file_exists($url)) return $this->showDownloadError();
 		$fp=fopen($url,'rb');
-		$file_content=fread($fp,filesize($url));
-		fclose($fp);
 		header("Pragma: private");
 		header("Cache-control: private, must-revalidate");
 		header("Content-type: application/octet-stream");
 		header('Content-disposition: attachment; filename="'.$record['file_dl_name'].'"');
-		echo $file_content;
+		while (!feof($fp)) {
+			set_time_limit (60);
+  			echo fread($fp, 8192);
+		}
+		fclose($fp);
 		exit();
 	}
-
-		/**
+	
+	/**
 		 * Unite 2 arrays to one
 		 *
 		 * @param	array		array with language values
