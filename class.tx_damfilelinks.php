@@ -481,10 +481,14 @@
 			$initP = '?id='.$GLOBALS['TSFE']->id.'&type='.$GLOBALS['TSFE']->type;
 			if (@is_file($url))	{
 				if($conf['jumpurl.']['damSecure']){
+					$cid = $this->pObj->cObj->data['uid'];
+					if($cid == 0 && is_array($this->pObj->cObj->parentRecord) && is_array($this->pObj->cObj->parentRecord['data']) && isset($this->pObj->cObj->parentRecord['data']['uid'])) {
+						$cid = $this->pObj->cObj->parentRecord['data']['uid'];
+					}
 					return $this->pObj->cObj->typolink('',array(
 						'returnLast'=>'url',
 						'parameter'=>$GLOBALS['TSFE']->page['uid'],
-						'additionalParams'=>'&cid='.$this->pObj->cObj->data['uid'].'&did='.$record['dam'].'&sechash='.substr(md5($this->pObj->cObj->data['uid'].$record['dam'].$GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey']),0,8),
+						'additionalParams'=>'&cid='.$cid.'&did='.$record['dam'].'&sechash='.substr(md5($cid.$record['dam'].$GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey']),0,8),
 						'no_cache'=>1
 					));
 				}else{
@@ -560,7 +564,7 @@
 	 * @return	void
 	 */
 	function getDownload($record,$url){
-		$url=PATH_site.$url;
+		$url = t3lib_div::getFileAbsFileName($url, false);
 		if(!file_exists($url)) return $this->showDownloadError();
 		$fp=fopen($url,'rb');
 		header("Pragma: private");
