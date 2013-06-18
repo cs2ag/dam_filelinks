@@ -359,7 +359,14 @@
 				}
 				$localized_id = isset($this->pObj->cObj->data['_LOCALIZED_UID']) ? $this->pObj->cObj->data['_LOCALIZED_UID'] : $this->pObj->cObj->parentRecord['data']['_LOCALIZED_UID'];
 				if ($localized_id) {$_id = $localized_id;}
-				$res=$this->getDamFromDatabase($_id,$dam_selectfields,$conf['dam.']['damIdentField']);
+
+				// Support repetitive DAM objects in FCEs
+				$refField = $conf['dam.']['damIdentField'];
+				if ($conf['repetitive'] && $GLOBALS['TSFE']->register['tx_templavoila_pi1.sectionPos']) {
+					$refField .= '_' . $GLOBALS['TSFE']->register['tx_templavoila_pi1.sectionPos'];
+				}
+				$res = $this->getDamFromDatabase($_id,$dam_selectfields,$refField);
+
                 $files_all_dam=array();
 
 				/* select ende */
